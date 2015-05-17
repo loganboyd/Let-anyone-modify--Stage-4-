@@ -1,0 +1,54 @@
+
+
+{% block content %}
+
+<div class="heading">
+        <h2>Statge 4 </h2>
+  </div>
+  <div class="stage">
+    <div class="topic">
+      <h3>How Servers Work</h3> 
+        <p>
+          Servers allow us to create, share, and display web content. Using a public web sever allows anyone with access to the internet to view a specified web site and contact. Servers render HTTP in a way that browsers can display the content correctly to the user
+          <br>
+          <br>
+          The purpose of a server is to respond to HTTP requests. Servers can display static (pre-written content files) and Dynamic (content requests that are build real time).
+          <br>
+          <br>
+          Web applications are programs that build web content. 
+          <br>
+          <br>
+          <a href="https://www.udacity.com/course/viewer/#!/c-nd000/l-4169998949/m-48748026">This video</a> does a good job of explaining more about servers.
+        </p>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="topic">
+      <h3>Importance of Validating Input</h3> 
+        <p>
+          Validating input allows the server side that the input received is what we expected. Without validation, users could unintentionally or intentionally cause malicious changes to our site. 
+          <br>
+          <br>
+          <a href="https://www.udacity.com/course/viewer/#!/c-nd000/l-4175328805/m-48624667">This video</a> does a good job of explaining more about validation
+        </p>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="topic">
+      <h3>HTML Templates and Abstraction</h3> 
+        <p>
+          A template library is a library to build complicated strings. When developing web applications the use of templates allows us to breakup and simplify our code within many abstracted code documents.
+          <br>
+          <br>
+          Templates also help in avoiding repetition by allowing us to call on and reuse sets of code without having to retype.  
+          <br>
+          <br>
+          In our shopping list exercise we used a common base or index html page to display the header and footer. Additional pages of code where called using extends  and block content. This allowed us to easily build a dynamic web page without having to use redundant code. 
+          <br>
+          <br>
+          <a href="https://www.udacity.com/course/viewer/#!/c-nd000/l-4186408748/m-686598825">This video</a> does a good job of explaining more about validation
+        </p>
+    </div>
+  </div>
+
+{% endblock %}

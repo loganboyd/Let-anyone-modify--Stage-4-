@@ -4,7 +4,7 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
-# [START handlers]
+# handlers
 handlers:
 - url: /css
   static_dir: css
@@ -13,13 +13,12 @@ handlers:
   static_dir: images
 
 - url: /.*
-  script: wallbook.app
-# [END handlers]
+  script: my_site.app
 
-# [START libraries]
+# libraries
 libraries:
 - name: webapp2
   version: latest
 - name: jinja2
   version: latest
-# [END libraries]
+

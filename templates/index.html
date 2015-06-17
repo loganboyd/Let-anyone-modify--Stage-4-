@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logan Boyd</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="intro">
+          INTRO TO PROGRAMMING 
+    </div>
+    <div class="row post-container">
+      <div class="md-col-12">
+    <div class="heading">
+        <h2>Statge 4 </h2>
+  </div>
+  <div class="stage">
+    <div class="topic">
+      <h3>How Servers Work</h3> 
+        <p>
+          Servers allow us to create, share, and display web content. Using a public web sever allows anyone with access to the internet to view a specified web site and contact. Servers render HTTP in a way that browsers can display the content correctly to the user
+          <br>
+          <br>
+          The purpose of a server is to respond to HTTP requests. Servers can display static (pre-written content files) and Dynamic (content requests that are build real time).
+          <br>
+          <br>
+          Web applications are programs that build web content. 
+          <br>
+          <br>
+                    Below are the step in how servers handle requests and deliver responses:
+          <br>
+          <br>
+          Step 1: Parsing the URL
+          <br>
+          <br>
+          The first thing the browser has to do is to look at the URL of the new document to find out how to get hold of the new document. Most URLs have this basic form: "protocol://server/request-URI". The protocol part describes how to tell the server which document the you want and how to retrieve it. The server part tells the browser which server to contact, and the request-URL is the name used by the web server to identify the document. 
+          <br>
+          <br>
+          Step 2: Sending the request
+          <br>
+          <br>
+          Usually, the protocol is "http". To retrieve a document via HTTP the browser transmits the following request to the server: "GET /request-URI HTTP/version", where version tells the server which HTTP version is used. Usually, the browser includes some more information as well. 
+          <br>
+          <br>
+          One important point here is that this request string is all the server ever sees. So the server doesn't care if the request came from a browser, a link checker, a validator, a search engine robot or if you typed it in manually. It just performs the request and returns the result.
+          <br>
+          <br>
+          Step 3: The server response
+          <br>
+          <br>
+          When the server receives the HTTP request it locates the appropriate document and returns it. However, an HTTP response is required to have a particular form. 
+          <br>
+          <br>
+          The first line shows the HTTP version used, followed by a three-digit number (the HTTP status code) and a reason phrase meant for humans. Usually the code is 200 (which basically means that all is well) and the phrase "OK". The first line is followed by some lines called the header, which contains information about the document. The header ends with a blank line, followed by the document content. 
+          <br>
+          <br>
+          <a href="https://www.udacity.com/course/viewer/#!/c-nd000/l-4169998949/m-48748026">This video</a> does a good job of explaining more about servers.
+        </p>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="topic">
+      <h3>Importance of Validating Input</h3> 
+        <p>
+          Validating input allows the server side that the input received is what we expected. Without validation, users could unintentionally or intentionally cause malicious changes to our site. 
+          <br>
+          <br>
+          <a href="https://www.udacity.com/course/viewer/#!/c-nd000/l-4175328805/m-48624667">This video</a> does a good job of explaining more about validation
+        </p>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="topic">
+      <h3>HTML Templates and Abstraction</h3> 
+        <p>
+          A template library is a library to build complicated strings. When developing web applications the use of templates allows us to breakup and simplify our code within many abstracted code documents.
+          <br>
+          <br>
+          Templates also help in avoiding repetition by allowing us to call on and reuse sets of code without having to retype.  
+          <br>
+          <br>
+          In our shopping list exercise we used a common base or index html page to display the header and footer. Additional pages of code where called using extends  and block content. This allowed us to easily build a dynamic web page without having to use redundant code. 
+          <br>
+          <br>
+          <a href="https://www.udacity.com/course/viewer/#!/c-nd000/l-4186408748/m-686598825">This video</a> does a good job of explaining more about validation
+        </p>
+    </div>
+  </div>
+      <br/>
+            <a name="comments"></a>
+            <div class="comments">
+              <form action="/sign" method="post">
+                <div>
+                  <label for="comment">Add a Comment</label>
+                  <a class="linktext" href="{{ url|safe }}">{{ url_linktext }}</a>
+                </div>
+                <div><p style="color: red">{{ blank_comment_error }}</p></div>
+            <div><textarea name="comment" rows="10" cols="60"></textarea></div>
+            <div><input type="submit" value="Submit"></div>
+            <br/>
+        </form>
+        <div class="comments">
+        {% for comment in comments %}
+              {% if comment.author %}
+               <b>{{ comment.author.email }}
+            {% if user %}
+                    (You)
+                  {% endif %}
+               </b> wrote on {{ comment.timestamp.strftime("%m/%d/%Y at %H:%M UTC") }}:
+              {% else %}
+               <em>Anonymous</em> wrote on {{ comment.timestamp.strftime("%m/%d/%Y at %H:%M UTC") }}:
+              {% endif %}
+            <div class="comment"><pre><blockquote>{{ comment.content }}</blockquote></pre></div>
+            <br/>
+          {% endfor %}
+        </div>
+      </div>
+  <div class="footer">
+  </div>
+</body>
+</html>

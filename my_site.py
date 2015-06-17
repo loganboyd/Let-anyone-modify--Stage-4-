@@ -1,9 +1,10 @@
 import urllib
 import os
+import cgi
+import time
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
-from google.appengine.datastore.datastore_query import Cursor
 
 import webapp2
 import jinja2
@@ -11,49 +12,28 @@ import jinja2
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
 
-class Handler(webapp2.RequestHandler):
-    def write(self, *a, **kw):
-        self.response.write(*a, **kw)
-
-    def render_str(self, template, **params):
-        t = jinja_env.get_template(template)
-        return t.render(params)
-
-    def render(self, template, **kw):
-        self.write(self.render_str(template, **kw))
-
-
-DEFAULT_PAGE = 'Logans Page'
-
-def wall_key(mypage_name=DEFAULT_PAGE):
-    return ndb.Key('Wall', mypage_name)
-
 class Author(ndb.Model):
     identity = ndb.StringProperty(indexed=True)
     name = ndb.StringProperty(indexed=False)
     email = ndb.StringProperty(indexed=False)
 
-class Post(ndb.Model):
+class Comment(ndb.Model):
     author = ndb.StructuredProperty(Author)
     content = ndb.StringProperty(indexed=False)
-    date = ndb.DateTimeProperty(auto_now_add=True)
+    timestamp = ndb.DateTimeProperty(auto_now_add=True)
+
+class Handler(webapp2.RequestHandler):
+    def write(self, *a, **kw):
+        self.response.write(*a, **kw)
 
 class MainPage(Handler):
-    def get(self):
-        mypage_name = self.request.get('mypage_name',DEFAULT_PAGE)
-        if mypage_name == DEFAULT_PAGE.lower(): mypage_name = DEFAULT_PAGE
 
-        posts_to_fetch = 10
-        cursor_url = self.request.get('continue_posts')
-        arguments = {'mypage_name': mypage_name}
-        posts_query = Post.query(ancestor = wall_key(mypage_name)).order(-Post.date)
-        posts, cursor, more = posts_query.fetch_page(posts_to_fetch, start_cursor =
-            Cursor(urlsafe=cursor_url))
+    def get_template_values(self, blank_comment_error=''):
+        comments_query = Comment.query().order(-Comment.timestamp)
+        comments, cursor, more = comments_query.fetch_page(25)
 
-        if more:
-            arguments['continue_posts'] = cursor.urlsafe()
-        arguments['posts'] = posts
         user = users.get_current_user()
+
         if user:
             url = users.create_logout_url(self.request.uri)
             url_linktext = 'Logout'
@@ -61,39 +41,49 @@ class MainPage(Handler):
             user = 'Anonymous Poster'
             url = users.create_login_url(self.request.uri)
             url_linktext = 'Login'
+            
+        template_values = {
+            'user': user,
+            'comments': comments,
+            'url': url,
+            'url_linktext': url_linktext,
+            'blank_comment_error': blank_comment_error,
+        }
+        return template_values
 
-        arguments['user_name'] = user
-        arguments['url'] = url
-        arguments['url_linktext'] = url_linktext
+    def get(self):
+        template = jinja_env.get_template('index.html')
+        self.write(template.render(self.get_template_values()))
 
 
-        self.render('notes.html', **arguments)
-
-class PostWall(webapp2.RequestHandler):
     def post(self):
-        mypage_name = self.request.get('mypage_name',DEFAULT_PAGE)
-        post = Post(parent=wall_key(mypage_name))
+        comment = Comment()
 
         if users.get_current_user():
-            post.author = Author(
+                comment.author = Author(
                     identity=users.get_current_user().user_id(),
                     name=users.get_current_user().nickname(),
                     email=users.get_current_user().email())
 
-        content = self.request.get('content')
+        comment.content = self.request.get('comment')
 
-        if type(content) != unicode:
-            post.content = unicode(self.request.get('content'),'utf-8')
-        else:
-            post.content = self.request.get('content')
-        post.put()
+        if comment.content == '' or comment.content.isspace():
+            self.redirect('/error#comments')            
 
-        query_params = {'mypage_name': mypage_name}
-        self.redirect('/?' + urllib.urlencode(query_params))
+        else:    
+            comment.put()
+            time.sleep(1) 
+            self.redirect('/#comments')
+
+
+class ErrorHandler(MainPage):
+    def get(self):
+        template = jinja_env.get_template('index.html')
+        self.write(template.render(self.get_template_values('Comment invalid!!! Please submit valid input')))
 
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/sign', PostWall),
-
+    ('/sign', MainPage),
+    ('/error', ErrorHandler),
 ], debug=True)
